@@ -1,0 +1,169 @@
+/* Base */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: linear-gradient(to bottom, #eaf7f5, #ffffff 65%);
+  color: #003d33;
+}
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* Header */
+.header {
+  background: #b4d7d37a; /* translucent teal */
+  color: #1a1d25;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 40px 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+.logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+}
+.header h1 {
+  margin: 0;
+  font-size: 2.7rem;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+/* Cards grid (home) */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 80vh;
+  align-content: center;
+  justify-content: center;
+}
+
+/* Home role cards — GLASS look + slight transparency */
+.role-card {
+  background: rgba(255, 255, 255, 0.65); /* ⬅︎ transparent */
+  backdrop-filter: blur(4px);            /* frosted-glass */
+  border-radius: 20px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 460px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+.role-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+}
+
+/* Role images slightly see-through so video shows */
+.role-img {
+  width: 100%;
+  height: 90%;
+  object-fit: cover;
+  background: #f2f2f2;
+  opacity: 0.9;                      /* ⬅︎ transparency */
+  transition: opacity .25s ease;
+}
+.role-card:hover .role-img { opacity: 1; }
+
+.role-footer {
+  flex: 1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.role-footer h3 {
+  color: #004d40;
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.6); /* improves contrast over video */
+}
+
+/* Buttons, sections */
+.back-btn {
+  background:#004d40; color:#fff; border:0; border-radius:8px;
+  padding:8px 14px; margin:18px; cursor:pointer;
+}
+.section-title { text-align:center; color:#0d5d52; margin-top:10px; }
+.muted { color:#5a8882; }
+
+/* Containers (doctor/nurse/student pages) */
+.patient-list, .doctor-dashboard, .summary-card {
+  max-width: 1050px; margin: 20px auto; background:#fff;
+  border-radius: 16px; padding: 20px; box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+/* Two-column layout in doctor */
+.doctor-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 900px){ .doctor-grid { grid-template-columns: 1fr; } }
+
+/* Patient grid/cards (solid so forms stay readable) */
+.patient-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:16px; }
+.patient-card {
+  background:#eaf7f5; border-radius:12px; padding:14px; cursor:pointer;
+  transition: box-shadow .2s, transform .2s;
+}
+.patient-card:hover { transform: translateY(-2px); }
+.patient-card h4 { margin:0 0 6px; color:#0d5d52; }
+.patient-card p { margin:4px 0; color:#47615e; font-size:14px; }
+.patient-card button { background:#00796b; color:#fff; border:0; border-radius:8px; padding:6px 12px; cursor:pointer; margin-top:8px; }
+.active-patient { box-shadow: 0 0 0 3px #00796b inset; }
+
+/* Inputs & Textareas */
+input, textarea {
+  width:100%; padding:10px; border-radius:10px; border:1px solid #cfd9d7; margin-top:6px; font-size:14px;
+}
+
+/* Tests */
+.tests-wrap { display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:8px; margin:8px 0; }
+.tests-wrap label { display:flex; gap:8px; align-items:center; background:#f2fbfa; padding:8px; border-radius:8px; }
+.test-custom { display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+.mini { padding:6px 10px; border:0; border-radius:8px; background:#00796b; color:#fff; cursor:pointer; }
+.chips { display:flex; flex-wrap:wrap; gap:8px; }
+.chip { background:#e0f2f1; color:#00695c; padding:6px 10px; border-radius:999px; font-size:13px; }
+.chip .x { margin-left:6px; cursor:pointer; }
+
+/* Action buttons */
+#startRecord, #stopRecord, #sendEmail, #editSummary, #viewSummary {
+  background: #00796b; color:#fff; border:0; border-radius: 8px;
+  padding: 10px 14px; margin: 6px 6px 6px 0; cursor:pointer;
+}
+#editSummary { background: #ff9800; }
+#editSummary:hover { background:#e68900; }
+button:disabled { opacity:.6; cursor:not-allowed; }
+
+footer { text-align:center; padding:16px; color:#0d5d52; }
+
+/* Fullscreen background video */
+.bg-container {
+  position: fixed;
+  inset: 0;
+  z-index: -1;            /* keep behind all content */
+  pointer-events: none;   /* don't block clicks */
+}
+.bg-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(2px) brightness(0.9);  /* ⬅︎ a bit more blur for polish */
+  transform: scale(1.05);             /* avoids blur edge lines */
+}
+/* subtle color tint to improve text readability */
+.bg-container .bg-tint {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 64, 60, 0.25);
+}
+/* Hide the video when not on the home screen */
+.bg-container.hide { display: none; }

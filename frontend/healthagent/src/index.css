@@ -1,0 +1,367 @@
+/* === Global Reset === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #e8f9f9, #ffffff);
+  color: #1e2d2d;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* === Header === */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(0, 128, 128, 0.08);
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.header .logo {
+  height: 55px;
+  width: 55px;
+  border-radius: 50%;
+  object-fit: contain;
+}
+
+.header h1 {
+  font-weight: 600;
+  font-size: 1.9rem;
+  color: #007a7a;
+  letter-spacing: 0.5px;
+}
+
+/* === Background Video Tint === */
+.bg-container {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.bg-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bg-tint {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+/* === Role Cards (Home) === */
+.cards-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 50px;
+}
+
+.role-card {
+  background: rgba(255,255,255,0.8);
+  border-radius: 20px;
+  box-shadow: 0 5px 20px rgba(0, 128, 128, 0.15);
+  width: 220px;
+  text-align: center;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.role-card:hover {
+  transform: translateY(-8px);
+  background: #f0fbfb;
+  box-shadow: 0 10px 25px rgba(0,128,128,0.25);
+}
+
+.role-card img {
+  width: 90%;
+  height: 160px;
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+
+.role-footer h3 {
+  color: #006666;
+  font-weight: 600;
+}
+
+/* === Back Button === */
+.back-btn {
+  background: transparent;
+  border: none;
+  color: #007a7a;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-left: 2rem;
+  margin-top: 1rem;
+  transition: all 0.2s ease;
+}
+.back-btn:hover {
+  color: #009999;
+  transform: translateX(-3px);
+}
+
+/* === Section Titles === */
+.section-title {
+  text-align: center;
+  font-size: 1.6rem;
+  margin: 25px 0;
+  color: #004c4c;
+  font-weight: 600;
+}
+
+/* === Containers === */
+.patient-list, .doctor-dashboard {
+  margin: 25px auto;
+  width: 85%;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 18px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  padding: 25px;
+  transition: 0.3s;
+}
+
+/* === Patient Cards Grid === */
+.patient-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 18px;
+}
+
+.patient-card {
+  background: #ffffff;
+  border: 1px solid #cde7e7;
+  border-radius: 14px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.patient-card:hover {
+  transform: translateY(-4px);
+  border-color: #00a6a6;
+  box-shadow: 0 6px 10px rgba(0,128,128,0.15);
+}
+
+.patient-card.active-patient {
+  border: 2px solid #00a6a6;
+  background-color: #f4fafa;
+}
+
+.patient-card h4 {
+  color: #007979;
+  margin-bottom: 8px;
+  font-size: 1.05rem;
+}
+
+/* === Input Fields === */
+label {
+  display: block;
+  margin-top: 12px;
+  font-weight: 500;
+  color: #004d4d;
+}
+
+input, textarea {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 1px solid #b6e0e0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background-color: #fff;
+  transition: 0.2s;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: #00a6a6;
+  box-shadow: 0 0 5px rgba(0,166,166,0.25);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* === Buttons === */
+button {
+  border: none;
+  padding: 9px 16px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-weight: 500;
+}
+
+button.mini {
+  padding: 6px 10px;
+  font-size: 0.85rem;
+}
+
+#startRecord {
+  background-color: #009688;
+  color: white;
+}
+#startRecord:hover {
+  background-color: #00796b;
+}
+
+#stopRecord {
+  background-color: #f44336;
+  color: white;
+}
+#stopRecord:hover {
+  background-color: #d32f2f;
+}
+
+.actions button {
+  margin-right: 8px;
+  background-color: #009688;
+  color: white;
+}
+.actions button:hover {
+  background-color: #00796b;
+}
+
+#downloadPdf {
+  background-color: #ffd54f;
+  color: #000;
+  font-weight: 600;
+}
+#downloadPdf:hover {
+  background-color: #ffca28;
+}
+
+/* === Recording Status === */
+#recordingStatus {
+  margin-top: 12px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: color 0.3s;
+  color: #444;
+}
+#recordingStatus.success { color: #00a676; }
+#recordingStatus.error { color: #d32f2f; }
+#recordingStatus.waiting { color: #ff9800; }
+
+/* === Tests List === */
+.tests-wrap {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.tests-wrap label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fdfd;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1f0f0;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.tests-wrap label:hover {
+  background: #e8f9f9;
+}
+
+/* === Selected Tests Chips === */
+.chips {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  background-color: #e0f7f7;
+  border: 1px solid #00b3b3;
+  color: #004c4c;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.chip .x {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* === Spinner (optional) === */
+.spinner {
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #00a6a6;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  margin-left: 6px;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* === Footer === */
+footer {
+  margin-top: 40px;
+  text-align: center;
+  color: #555;
+  font-size: 0.9rem;
+  padding: 15px 0;
+}
+
+/* === Screen Transitions === */
+.screen {
+  opacity: 0;
+  display: none;
+  transition: opacity 0.5s ease;
+}
+.screen.active {
+  opacity: 1;
+  display: block;
+}
+
+/* === Responsive === */
+@media (max-width: 900px) {
+  .doctor-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .patient-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .role-card {
+    width: 180px;
+  }
+}

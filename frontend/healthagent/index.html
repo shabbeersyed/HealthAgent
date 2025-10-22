@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Health Agent</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <!-- HEADER -->
+  <div id="homeBg" class="bg-container">
+    <video id="bgVideo" autoplay muted loop playsinline>
+      <source src="Avatar.mp4" type="video/mp4" />
+    </video>
+    <div class="bg-tint"></div>
+  </div>
+
+  <header class="header">
+    <img src="logo.png" alt="Health Agent Logo" class="logo" />
+    <h1>Health Agent</h1>
+  </header>
+
+  <!-- ===== HOME (cards) ===== -->
+  <section id="homeSection" class="screen active">
+    <main class="cards-grid">
+      <div class="role-card" onclick="openScreen('doctorSection', true)">
+        <img src="doctor.png" alt="Doctors" class="role-img"/>
+        <div class="role-footer"><h3>Doctors</h3></div>
+      </div>
+
+      <div class="role-card" onclick="openScreen('nurseSection', true)">
+        <img src="nurse.png" alt="Nurses" class="role-img"/>
+        <div class="role-footer"><h3>Nurses</h3></div>
+      </div>
+
+      <div class="role-card" onclick="openScreen('studentSection', true)">
+        <img src="med_student.png" alt="Medical Students" class="role-img"/>
+        <div class="role-footer"><h3>Medical Students</h3></div>
+      </div>
+    </main>
+  </section>
+
+  <!-- ===== DOCTORS ===== -->
+  <section id="doctorSection" class="screen">
+    <button class="back-btn" onclick="goHome()">⬅ Back</button>
+    <h2 class="section-title">Doctor Consultation Dashboard</h2>
+
+    <div class="patient-list">
+      <h3>Available Patients</h3>
+      <div id="patientsContainer" class="patient-grid"></div>
+    </div>
+
+    <div class="doctor-dashboard">
+      <div class="doctor-grid">
+        <!-- Patient Details -->
+        <div>
+          <h3>Patient Details</h3>
+          <label>Name <input type="text" id="patientName" readonly></label>
+          <label>Age <input type="number" id="patientAge" readonly></label>
+          <label>Weight (kg) <input type="number" id="patientWeight" readonly></label>
+          <label>Email <input type="email" id="patientEmail" readonly></label>
+          <label>Reason for Visit <input type="text" id="patientReason" readonly></label>
+
+          <h3 style="margin-top:18px;">Tests to Order</h3>
+          <div class="tests-wrap" id="testsWrap"></div>
+          <div class="test-custom">
+            <input type="text" id="customTestInput" placeholder="Add custom test (e.g., D-Dimer)"/>
+            <button class="mini" id="addCustomTest" type="button">Add</button>
+          </div>
+          <div id="selectedTests" class="chips"></div>
+        </div>
+
+        <!-- Recording + Summary -->
+        <div>
+          <h3>Consultation Recording</h3>
+          <div class="record-controls">
+            <button id="startRecord" type="button">🎙 Start Recording</button>
+            <button id="stopRecord" type="button" disabled>⏹ Stop Recording</button>
+          </div>
+
+          <p id="recordingStatus">🔴 Not Recording</p>
+
+          <h3>Doctor Summary</h3>
+          <textarea id="summaryText" rows="8" placeholder="AI summary will appear here..." readonly></textarea>
+          <div class="actions">
+            <button id="sendEmail" type="button">📧 Send & Sync</button>
+            <button id="editSummary" type="button">✏️ Edit</button>
+            <button id="downloadPdf" type="button" style="display:none;">📄 Download PDF</button>
+          </div>
+          <p class="muted">
+            “Send & Sync” saves tests + generates audience summaries (Patient, Nurse, Med Student) and updates their screens.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== NURSES ===== -->
+  <section id="nurseSection" class="screen">
+    <button class="back-btn" onclick="goHome()">⬅ Back</button>
+    <h2 class="section-title">Nurse Dashboard</h2>
+    <div class="patient-list">
+      <h3>Available Patients</h3>
+      <div id="nursePatientsContainer" class="patient-grid"></div>
+    </div>
+
+    <div class="summary-card">
+      <h3>Patient Summary (Nurse)</h3>
+      <p id="nurseSelectedName" class="muted"></p>
+      <textarea id="nurseSummaryBox" rows="8" readonly placeholder="No summary received yet."></textarea>
+      <h4>Tests Ordered</h4>
+      <div id="nurseTests" class="chips"></div>
+    </div>
+  </section>
+
+  <!-- ===== STUDENTS ===== -->
+  <section id="studentSection" class="screen">
+    <button class="back-btn" onclick="goHome()">⬅ Back</button>
+    <h2 class="section-title">Student Caseboard</h2>
+    <div class="patient-list">
+      <h3>Cases</h3>
+      <div id="studentPatientsContainer" class="patient-grid"></div>
+    </div>
+
+    <div class="summary-card">
+      <h3>Teaching Summary</h3>
+      <p id="studentSelectedName" class="muted"></p>
+      <textarea id="studentSummaryBox" rows="10" readonly placeholder="Case-based summary appears here."></textarea>
+      <h4>Tests Ordered</h4>
+      <div id="studentTests" class="chips"></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Health Agent</p>
+  </footer>
+
+  <script src="script.js"></script>
+
+  <!-- === Backend integration === -->
+  <script>
+    const startBtn = document.getElementById("startRecord");
+    const stopBtn = document.getElementById("stopRecord");
+    const statusText = document.getElementById("recordingStatus");
+    const summaryBox = document.getElementById("summaryText");
+    const downloadBtn = document.getElementById("downloadPdf");
+    const sendBtn = document.getElementById("sendEmail");
+    let lastPdfPath = "";
+
+    // 🎙 Start Recording
+    startBtn.addEventListener("click", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      statusText.textContent = "🎙 Starting recording...";
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+      downloadBtn.style.display = "none";
+      try {
+        const res = await fetch("http://127.0.0.1:5000/start_recording", { method: "POST" });
+        const data = await res.json();
+        statusText.textContent = data.message || "🔴 Recording in progress...";
+      } catch (err) {
+        console.error(err);
+        statusText.textContent = "⚠️ Failed to start recording.";
+      }
+    });
+
+    // ⏹ Stop Recording + Send patient details
+    stopBtn.addEventListener("click", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      statusText.textContent = "⏹ Processing recording...";
+      stopBtn.disabled = true;
+      summaryBox.value = "⏳ Generating AI summary, please wait...";
+
+      const patientData = {
+        name: document.getElementById("patientName").value,
+        age: document.getElementById("patientAge").value,
+        weight: document.getElementById("patientWeight").value,
+        email: document.getElementById("patientEmail").value,
+        reason: document.getElementById("patientReason").value
+      };
+
+      try {
+        const res = await fetch("http://127.0.0.1:5000/stop_recording", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(patientData)
+        });
+        const data = await res.json();
+
+        summaryBox.value = data.summary || "⚠️ No summary received.";
+        summaryBox.scrollIntoView({ behavior: "smooth", block: "center" });
+        lastPdfPath = data.pdf_path;
+        statusText.textContent = "✅ Recording complete! Summary added below.";
+        downloadBtn.style.display = "inline-block";
+      } catch (err) {
+        console.error(err);
+        statusText.textContent = "⚠️ Error stopping recording.";
+      } finally {
+        startBtn.disabled = false;
+      }
+    });
+
+    // 📄 Download PDF
+    downloadBtn.addEventListener("click", () => {
+      if (lastPdfPath) {
+        window.open(`http://127.0.0.1:5000/${lastPdfPath}`, "_blank");
+      } else {
+        alert("No PDF available yet!");
+      }
+    });
+
+    // 📧 Send & Sync Email
+    sendBtn.addEventListener("click", async () => {
+      const email = document.getElementById("patientEmail").value.trim();
+      const name = document.getElementById("patientName").value.trim();
+      const summary = document.getElementById("summaryText").value.trim();
+      const tests = Array.from(document.querySelectorAll("#selectedTests .chip"))
+        .map(chip => chip.textContent.replace("×", "").trim());
+
+      if (!email) {
+        alert("⚠️ Please select a patient with an email address before sending.");
+        return;
+      }
+
+      try {
+        const res = await fetch("http://127.0.0.1:5000/send_email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, name, summary, tests })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          alert(`✅ Email successfully sent to ${email}`);
+        } else {
+          alert(`⚠️ Failed to send email: ${data.error || "Unknown error"}`);
+        }
+      } catch (err) {
+        console.error("❌ Email send error:", err);
+        alert("❌ Failed to send email. Please check the Flask server log.");
+      }
+    });
+  </script>
+</body>
+</html>

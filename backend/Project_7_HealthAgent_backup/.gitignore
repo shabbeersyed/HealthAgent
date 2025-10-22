@@ -1,0 +1,13 @@
+# Ignore environment files
+.env
+
+# Ignore compiled Python files
+__pycache__/
+*.pyc
+
+# Ignore audio and report folders
+Recordings/
+SOAP/
+
+# Ignore system files
+.DS_Store
