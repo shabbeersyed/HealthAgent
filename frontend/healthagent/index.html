@@ -135,10 +135,13 @@
     <p>© 2025 Health Agent</p>
   </footer>
 
-  <script src="script.js"></script>
+  <!-- ✅ FIXED: Use ES Module import for Vite/Vercel -->
+  <script type="module" src="/src/script.js"></script>
 
   <!-- === Backend integration === -->
-  <script>
+  <script type="module">
+    const API_BASE = "https://healthagent-mw4t.onrender.com"; // ✅ your backend URL
+
     const startBtn = document.getElementById("startRecord");
     const stopBtn = document.getElementById("stopRecord");
     const statusText = document.getElementById("recordingStatus");
@@ -156,7 +159,7 @@
       stopBtn.disabled = false;
       downloadBtn.style.display = "none";
       try {
-        const res = await fetch("http://127.0.0.1:5000/start_recording", { method: "POST" });
+        const res = await fetch(`${API_BASE}/start_recording`, { method: "POST" });
         const data = await res.json();
         statusText.textContent = data.message || "🔴 Recording in progress...";
       } catch (err) {
@@ -182,7 +185,7 @@
       };
 
       try {
-        const res = await fetch("http://127.0.0.1:5000/stop_recording", {
+        const res = await fetch(`${API_BASE}/stop_recording`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(patientData)
@@ -205,7 +208,7 @@
     // 📄 Download PDF
     downloadBtn.addEventListener("click", () => {
       if (lastPdfPath) {
-        window.open(`http://127.0.0.1:5000/${lastPdfPath}`, "_blank");
+        window.open(`${API_BASE}/${lastPdfPath}`, "_blank");
       } else {
         alert("No PDF available yet!");
       }
@@ -225,7 +228,7 @@
       }
 
       try {
-        const res = await fetch("http://127.0.0.1:5000/send_email", {
+        const res = await fetch(`${API_BASE}/send_email`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, name, summary, tests })
