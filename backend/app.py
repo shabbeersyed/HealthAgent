@@ -4,7 +4,6 @@ import uuid
 import json
 import smtplib
 import numpy as np
-import sounddevice as sd
 from scipy.io.wavfile import write
 from datetime import datetime
 from flask import Flask, jsonify, send_from_directory, request
@@ -21,6 +20,13 @@ from dotenv import load_dotenv  # ✅ Added for .env support
 
 # ✅ Load environment variables
 load_dotenv()
+
+# ✅ Conditionally import sounddevice only on local machine
+if not os.getenv("RENDER"):  
+    import sounddevice as sd
+    print("🎧 sounddevice enabled — running locally")
+else:
+    print("🔇 sounddevice skipped — running on Render")
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
