@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * Data store (dummy)
    * =============================== */
   const patients = [
-    { name:"Keerthana Srinivasan", age:50, weight:84, reason:" Chest Pain",        email:"keerthana22111@gmail.com",
+    { name:"Shabbeer Basha Syed", age:50, weight:84, reason:" Chest Pain",        email:"shabbeerbashasyed773@gmail.com",
       summaries:{ doctor:"", patient:"", nurse:"", student:"" }, tests:[] },
     { name:"Rohit Sharma",         age:35, weight:70, reason:"Headache",         email:"rohit.sharma@gmail.com",
       summaries:{ doctor:"", patient:"", nurse:"", student:"" }, tests:[] },

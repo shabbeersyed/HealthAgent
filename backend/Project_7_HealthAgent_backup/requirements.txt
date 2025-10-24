@@ -1,8 +1,0 @@
-flask
-openai
-reportlab
-sounddevice
-numpy
-smtplib
-python-dotenv
-gunicorn
