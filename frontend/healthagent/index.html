@@ -135,14 +135,13 @@
     <p>© 2025 Health Agent</p>
   </footer>
 
-  <!-- ✅ FIXED: Use ES Module import for Vite/Vercel -->
-   <script src="/script.js" defer></script>
-
+  <!-- ✅ FIXED: Correct relative path for Vercel -->
+  <script src="./script.js"></script>
 
 
   <!-- === Backend integration === -->
   <script type="module">
-    const API_BASE = "https://healthagent-mw4t.onrender.com"; // ✅ your backend URL
+    const API_BASE = "https://healthagent-mw4t.onrender.com";
 
     const startBtn = document.getElementById("startRecord");
     const stopBtn = document.getElementById("stopRecord");
@@ -152,10 +151,8 @@
     const sendBtn = document.getElementById("sendEmail");
     let lastPdfPath = "";
 
-    // 🎙 Start Recording
     startBtn.addEventListener("click", async (event) => {
       event.preventDefault();
-      event.stopPropagation();
       statusText.textContent = "🎙 Starting recording...";
       startBtn.disabled = true;
       stopBtn.disabled = false;
@@ -164,16 +161,13 @@
         const res = await fetch(`${API_BASE}/start_recording`, { method: "POST" });
         const data = await res.json();
         statusText.textContent = data.message || "🔴 Recording in progress...";
-      } catch (err) {
-        console.error(err);
+      } catch {
         statusText.textContent = "⚠️ Failed to start recording.";
       }
     });
 
-    // ⏹ Stop Recording + Send patient details
     stopBtn.addEventListener("click", async (event) => {
       event.preventDefault();
-      event.stopPropagation();
       statusText.textContent = "⏹ Processing recording...";
       stopBtn.disabled = true;
       summaryBox.value = "⏳ Generating AI summary, please wait...";
@@ -195,28 +189,21 @@
         const data = await res.json();
 
         summaryBox.value = data.summary || "⚠️ No summary received.";
-        summaryBox.scrollIntoView({ behavior: "smooth", block: "center" });
         lastPdfPath = data.pdf_path;
-        statusText.textContent = "✅ Recording complete! Summary added below.";
+        statusText.textContent = "✅ Recording complete!";
         downloadBtn.style.display = "inline-block";
-      } catch (err) {
-        console.error(err);
+      } catch {
         statusText.textContent = "⚠️ Error stopping recording.";
       } finally {
         startBtn.disabled = false;
       }
     });
 
-    // 📄 Download PDF
     downloadBtn.addEventListener("click", () => {
-      if (lastPdfPath) {
-        window.open(`${API_BASE}/${lastPdfPath}`, "_blank");
-      } else {
-        alert("No PDF available yet!");
-      }
+      if (lastPdfPath) window.open(`${API_BASE}/${lastPdfPath}`, "_blank");
+      else alert("No PDF available yet!");
     });
 
-    // 📧 Send & Sync Email
     sendBtn.addEventListener("click", async () => {
       const email = document.getElementById("patientEmail").value.trim();
       const name = document.getElementById("patientName").value.trim();
@@ -224,10 +211,7 @@
       const tests = Array.from(document.querySelectorAll("#selectedTests .chip"))
         .map(chip => chip.textContent.replace("×", "").trim());
 
-      if (!email) {
-        alert("⚠️ Please select a patient with an email address before sending.");
-        return;
-      }
+      if (!email) return alert("⚠️ Please select a patient with an email address before sending.");
 
       try {
         const res = await fetch(`${API_BASE}/send_email`, {
@@ -236,17 +220,11 @@
           body: JSON.stringify({ email, name, summary, tests })
         });
         const data = await res.json();
-
-        if (data.success) {
-          alert(`✅ Email successfully sent to ${email}`);
-        } else {
-          alert(`⚠️ Failed to send email: ${data.error || "Unknown error"}`);
-        }
-      } catch (err) {
-        console.error("❌ Email send error:", err);
-        alert("❌ Failed to send email. Please check the Flask server log.");
+        alert(data.success ? `✅ Email sent to ${email}` : `⚠️ Failed: ${data.error || "Unknown error"}`);
+      } catch {
+        alert("❌ Failed to send email. Please check backend logs.");
       }
     });
   </script>
-</body>
+</body>    
 </html>

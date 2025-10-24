@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const screens = document.querySelectorAll('.screen');
   const homeBg  = document.getElementById('homeBg');
 
+  // === Backend Base URL ===
+  const API_BASE = "https://healthagent-mw4t.onrender.com";
+
   function toTop() { document.documentElement.scrollTop = 0; document.body.scrollTop = 0; }
   function byId(id) { return document.getElementById(id); }
 
@@ -47,15 +50,15 @@ document.addEventListener('DOMContentLoaded', () => {
    * Data store (dummy)
    * =============================== */
   const patients = [
-    { name:"Shabbeer Basha Syed", age:50, weight:84, reason:" Chest Pain",        email:"shabbeerbashasyed773@gmail.com",
+    { name:"Shabbeer Basha Syed", age:50, weight:84, reason:"Chest Pain", email:"shabbeerbashasyed773@gmail.com",
       summaries:{ doctor:"", patient:"", nurse:"", student:"" }, tests:[] },
-    { name:"Rohit Sharma",         age:35, weight:70, reason:"Headache",         email:"rohit.sharma@gmail.com",
+    { name:"Rohit Sharma", age:35, weight:70, reason:"Headache", email:"rohit.sharma@gmail.com",
       summaries:{ doctor:"", patient:"", nurse:"", student:"" }, tests:[] },
-    { name:"Priya Nair",           age:29, weight:62, reason:"Fever",            email:"priya.nair@gmail.com",
+    { name:"Priya Nair", age:29, weight:62, reason:"Fever", email:"priya.nair@gmail.com",
       summaries:{ doctor:"", patient:"", nurse:"", student:"" }, tests:[] },
-    { name:"Aman Verma",           age:42, weight:80, reason:"Diabetes Checkup", email:"aman.verma@gmail.com",
+    { name:"Aman Verma", age:42, weight:80, reason:"Diabetes Checkup", email:"aman.verma@gmail.com",
       summaries:{ doctor:"", patient:"", nurse:"", student:"" }, tests:[] },
-    { name:"Sneha Patel",          age:31, weight:56, reason:"Cough & Cold",     email:"sneha.patel@gmail.com",
+    { name:"Sneha Patel", age:31, weight:56, reason:"Cough & Cold", email:"sneha.patel@gmail.com",
       summaries:{ doctor:"", patient:"", nurse:"", student:"" }, tests:[] },
   ];
 
@@ -103,7 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
     byId('patientWeight').value = p.weight;
     byId('patientEmail').value  = p.email;
     byId('patientReason').value = p.reason;
-
     byId('summaryText').value   = p.summaries.doctor || '';
 
     renderSelectedTests(p.tests);
@@ -115,9 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ===============================
    * Doctor: tests (built-in + custom)
    * =============================== */
-  const builtinTests = [
-    "CBC","CMP","Lipid Panel","HbA1c","Chest X-Ray","ECG","MRI","CT Scan","Urinalysis","COVID-19 PCR"
-  ];
+  const builtinTests = ["CBC","CMP","Lipid Panel","HbA1c","Chest X-Ray","ECG","MRI","CT Scan","Urinalysis","COVID-19 PCR"];
   let testsBuilt = false;
 
   function buildTestsOnce() {
@@ -177,102 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ===============================
-   * Nurse: patient list + summary
-   * =============================== */
-  let nurseBuilt = false;
-  let currentNurseIndex = 0;
-
-  function buildNursePatientsOnce() {
-    if (nurseBuilt) return;
-    const container = byId('nursePatientsContainer');
-    if (!container) return;
-
-    patients.forEach((p, i) => {
-      const card = document.createElement('div');
-      card.className = 'patient-card';
-      card.innerHTML = `
-        <h4>${p.name}</h4>
-        <p><b>Age:</b> ${p.age} &nbsp;|&nbsp; <b>Weight:</b> ${p.weight}kg</p>
-        <p><b>Reason:</b> ${p.reason}</p>
-        <textarea rows="2" readonly style="width:100%; resize:vertical;">${p.summaries.nurse || 'No summary yet.'}</textarea>
-        <button type="button">View Summary</button>
-      `;
-      card.addEventListener('click', () => loadNursePatient(i));
-      card.querySelector('textarea').addEventListener('click', (e) => { e.stopPropagation(); loadNursePatient(i); });
-      card.querySelector('button').addEventListener('click', (e) => { e.stopPropagation(); loadNursePatient(i); });
-      container.appendChild(card);
-    });
-
-    nurseBuilt = true;
-  }
-
-  function autoSelectNurseFirst() {
-    if (patients.length) {
-      loadNursePatient(0);
-      markActiveCard('#nursePatientsContainer', 0);
-    }
-  }
-
-  function loadNursePatient(index) {
-    currentNurseIndex = index;
-    const p = patients[index];
-
-    byId('nurseSelectedName').textContent = `${p.name} — ${p.reason}`;
-    byId('nurseSummaryBox').value = p.summaries.nurse || 'No summary received yet.';
-    renderChips('nurseTests', p.tests);
-
-    markActiveCard('#nursePatientsContainer', index);
-  }
-
-  /* ===============================
-   * Students: privacy labels + case
-   * =============================== */
-  let studentBuilt = false;
-  let currentStudentIndex = 0;
-
-  function buildStudentPatientsOnce() {
-    if (studentBuilt) return;
-    const container = byId('studentPatientsContainer');
-    if (!container) return;
-
-    patients.forEach((p, i) => {
-      const label = `Patient ${i + 1}`;
-      const card = document.createElement('div');
-      card.className = 'patient-card';
-      card.innerHTML = `
-        <h4>${label}</h4>
-        <p><b>Age:</b> ${p.age} &nbsp;|&nbsp; <b>Weight:</b> ${p.weight}kg</p>
-        <p><b>Case:</b> ${p.reason}</p>
-        <button type="button">Open Case</button>
-      `;
-      card.addEventListener('click', () => loadStudentPatient(i));
-      card.querySelector('button').addEventListener('click', (e) => { e.stopPropagation(); loadStudentPatient(i); });
-      container.appendChild(card);
-    });
-
-    studentBuilt = true;
-  }
-
-  function autoSelectStudentFirst() {
-    if (patients.length) {
-      loadStudentPatient(0);
-      markActiveCard('#studentPatientsContainer', 0);
-    }
-  }
-
-  function loadStudentPatient(index) {
-    currentStudentIndex = index;
-    const p = patients[index];
-
-    byId('studentSelectedName').textContent = `Patient ${index + 1} — ${p.reason}`;
-    byId('studentSummaryBox').value = p.summaries.student || 'Teaching summary will appear here.';
-    renderChips('studentTests', p.tests);
-
-    markActiveCard('#studentPatientsContainer', index);
-  }
-
-  /* ===============================
-   * Doctor: recording & summaries
+   * Doctor: recording & summaries (Connected to backend)
    * =============================== */
   const startBtn = byId('startRecord');
   const stopBtn  = byId('stopRecord');
@@ -281,21 +186,43 @@ document.addEventListener('DOMContentLoaded', () => {
   const sendBtn  = byId('sendEmail');
   const editBtn  = byId('editSummary');
 
-  startBtn?.addEventListener('click', () => {
+  startBtn?.addEventListener('click', async () => {
     statusEl.textContent = '🎙 Recording in progress...';
     statusEl.style.color = 'green';
     startBtn.disabled = true;
     stopBtn.disabled  = false;
+
+    try {
+      const res = await fetch(`${API_BASE}/start_recording`, { method: "POST" });
+      const data = await res.json();
+      console.log("🎧 Backend recording started:", data);
+    } catch (err) {
+      console.error("Error starting recording:", err);
+    }
   });
 
-  stopBtn?.addEventListener('click', () => {
+  stopBtn?.addEventListener('click', async () => {
     statusEl.textContent = '✅ Recording stopped';
     statusEl.style.color = 'red';
     startBtn.disabled = false;
     stopBtn.disabled  = true;
 
-    if (!summary.value.trim()) {
-      summary.value = 'Doctor and patient discussed symptoms. Exam performed. Tests ordered. Initial therapy started.';
+    const p = patients[currentDoctorIndex];
+    try {
+      const res = await fetch(`${API_BASE}/stop_recording`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(p)
+      });
+      const data = await res.json();
+      if (data.success) {
+        summary.value = data.summary;
+        alert("🩺 Summary generated and PDF created!");
+      } else {
+        alert("Error generating summary: " + data.error);
+      }
+    } catch (err) {
+      console.error("Error stopping recording:", err);
     }
   });
 
@@ -311,41 +238,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  sendBtn?.addEventListener('click', () => {
+  sendBtn?.addEventListener('click', async () => {
     const p = patients[currentDoctorIndex];
     if (!p.email) return alert('Please pick a patient first.');
 
-    // Save doctor’s summary & generate audience versions
     p.summaries.doctor = summary.value.trim();
     const { patientText, nurseText, studentText } = makeAudienceSummaries(p, currentDoctorIndex);
     p.summaries.patient = patientText;
     p.summaries.nurse   = nurseText;
     p.summaries.student = studentText;
 
-    // Broadcast updates so nurse/student views refresh
+    try {
+      const res = await fetch(`${API_BASE}/send_email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: p.email,
+          name: p.name,
+          summary: summary.value,
+          tests: p.tests
+        })
+      });
+      const data = await res.json();
+      if (data.success) alert("✅ Email sent successfully!");
+      else alert("❌ Email failed: " + data.error);
+    } catch (err) {
+      console.error("Email send error:", err);
+    }
+
     document.dispatchEvent(new CustomEvent('patientUpdated', { detail: { index: currentDoctorIndex } }));
-
-    alert(`Summary + tests sent to ${p.email} and synced to Nurse / Student views.`);
-  });
-
-  // Cross-screen refresh
-  document.addEventListener('patientUpdated', (e) => {
-    const i = e.detail.index;
-
-    // Update nurse list preview
-    const nurseCard = document.querySelectorAll('#nursePatientsContainer .patient-card')[i];
-    if (nurseCard) {
-      const ta = nurseCard.querySelector('textarea');
-      ta.value = patients[i].summaries.nurse || 'No summary yet.';
-    }
-
-    // If nurse/student is open on same patient, refresh detail panel
-    if (document.getElementById('nurseSection')?.classList.contains('active') && i === currentNurseIndex) {
-      loadNursePatient(i);
-    }
-    if (document.getElementById('studentSection')?.classList.contains('active') && i === currentStudentIndex) {
-      loadStudentPatient(i);
-    }
   });
 
   /* ===============================
@@ -414,8 +335,7 @@ ${base || '—'}`;
   }
 
   /* ===============================
-   * Auto-init: keep home visible with video
+   * Auto-init
    * =============================== */
-  // Ensure the home screen is active on load (video visible)
   openScreen('homeSection');
 });
